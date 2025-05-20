@@ -673,6 +673,8 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         gopls = {},
+        csharp_ls = {},
+        jsonls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -900,6 +902,24 @@ require('lazy').setup({
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+
+  -- Nicolai's plugins start
+  {
+    'm4xshen/hardtime.nvim',
+    lazy = false,
+    dependencies = { 'MunifTanjim/nui.nvim' },
+    opts = {},
+  },
+
+  { -- Autumatically create closing bracket, quote, etc
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    config = true,
+    -- use opts = {} for passing setup options
+    -- this is equivalent to setup({}) function
+  },
+
+  -- Nicolai's plugins end
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
