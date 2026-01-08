@@ -685,7 +685,9 @@ require('lazy').setup({
         gopls = {},
         csharp_ls = {},
         jsonls = {},
-        -- pyright = {},
+        terraformls = {},
+        ts_ls = {},
+        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -920,7 +922,52 @@ require('lazy').setup({
     dependencies = { 'MunifTanjim/nui.nvim' },
     opts = {},
   },
+  {
+    'f-person/git-blame.nvim',
+    event = 'VeryLazy',
+    opts = {},
+  },
+  {
+    'NickvanDyke/opencode.nvim',
+    dependencies = {
+      -- Recommended for `ask()` and `select()`.
+      -- Required for `snacks` provider.
+      ---@module 'snacks' <- Loads `snacks.nvim` types for configuration intellisense.
+      { 'folke/snacks.nvim', opts = { input = {}, picker = {}, terminal = {} } },
+    },
+    config = function()
+      ---@type opencode.Opts
+      vim.g.opencode_opts = {
+        -- Your configuration, if any — see `lua/opencode/config.lua`, or "goto definition".
+      }
 
+      -- Required for `opts.auto_reload`.
+      vim.o.autoread = true
+
+      -- Recommended/example keymaps.
+      vim.keymap.set({ 'n', 'x' }, '<C-a>', function()
+        require('opencode').ask('@this: ', { submit = true })
+      end, { desc = 'Ask opencode' })
+      vim.keymap.set({ 'n', 'x' }, '<C-x>', function()
+        require('opencode').select()
+      end, { desc = 'Execute opencode action…' })
+      vim.keymap.set({ 'n', 'x' }, 'ga', function()
+        require('opencode').prompt '@this'
+      end, { desc = 'Add to opencode' })
+      vim.keymap.set({ 'n', 't' }, '<C-.>', function()
+        require('opencode').toggle()
+      end, { desc = 'Toggle opencode' })
+      vim.keymap.set('n', '<S-C-u>', function()
+        require('opencode').command 'session.half.page.up'
+      end, { desc = 'opencode half page up' })
+      vim.keymap.set('n', '<S-C-d>', function()
+        require('opencode').command 'session.half.page.down'
+      end, { desc = 'opencode half page down' })
+      -- You may want these if you stick with the opinionated "<C-a>" and "<C-x>" above — otherwise consider "<leader>o".
+      vim.keymap.set('n', '+', '<C-a>', { desc = 'Increment', noremap = true })
+      vim.keymap.set('n', '-', '<C-x>', { desc = 'Decrement', noremap = true })
+    end,
+  },
   { -- Autumatically create closing bracket, quote, etc
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
@@ -934,59 +981,8 @@ require('lazy').setup({
     opts = {},
     config = function() end,
   },
-  -- {
-  --   'github/copilot.vim',
-  -- },
   {
-    'yetone/avante.nvim',
-    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-    build = 'make', -- ⚠️ must add this line! ! !
-    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
-    event = 'VeryLazy',
-    version = false, -- Never set this value to "*"! Never!
-    ---@module 'avante'
-    ---@type avante.Config
-    opts = {
-      -- add any opts here
-      -- for example
-      provider = 'gemini',
-    },
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-lua/plenary.nvim',
-      'MunifTanjim/nui.nvim',
-      --- The below dependencies are optional,
-      'nvim-telescope/telescope.nvim', -- for file_selector provider telescope
-      'hrsh7th/nvim-cmp', -- autocompletion for avante commands and mentions
-      'stevearc/dressing.nvim', -- for input provider dressing
-      'folke/snacks.nvim', -- for input provider snacks
-      'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
-      {
-        -- support for image pasting
-        'HakonHarnes/img-clip.nvim',
-        event = 'VeryLazy',
-        opts = {
-          -- recommended settings
-          default = {
-            embed_image_as_base64 = false,
-            prompt_for_file_name = false,
-            drag_and_drop = {
-              insert_mode = true,
-            },
-            -- required for Windows users
-            use_absolute_path = true,
-          },
-        },
-      },
-      {
-        -- Make sure to set this up properly if you have lazy=true
-        'MeanderingProgrammer/render-markdown.nvim',
-        opts = {
-          file_types = { 'markdown', 'Avante' },
-        },
-        ft = { 'markdown', 'Avante' },
-      },
-    },
+    'github/copilot.vim',
   },
 
   -- Nicolai's plugins end
